@@ -22,40 +22,74 @@ function updateDateTime() {
 async function fetchWeather() {
     try {
         const response = await fetch('/api/weather');
-        const data = await response.json();
+        const weatherData = await response.json();
         
         // Hide loading, show content
         document.getElementById('weatherLoading').style.display = 'none';
         document.getElementById('weatherContent').style.display = 'block';
         
-        // Update current weather
-        document.getElementById('weatherIcon').textContent = getWeatherEmoji(data.description);
-        document.getElementById('temperature').textContent = `${data.temperature}°C`;
-        document.getElementById('description').textContent = data.description.charAt(0).toUpperCase() + data.description.slice(1);
-        document.getElementById('humidity').textContent = data.humidity;
-        document.getElementById('windSpeed').textContent = data.windSpeed;
-        document.getElementById('location').textContent = data.location;
+        const weatherCardsContainer = document.getElementById('weatherCards');
+        weatherCardsContainer.innerHTML = '';
         
-        // Update forecast
-        const forecastContainer = document.getElementById('forecast');
-        forecastContainer.innerHTML = '';
-        
-        data.forecast.forEach(day => {
-            const forecastCard = `
-                <div class="col">
-                    <div class="forecast-card">
-                        <div class="forecast-icon">${day.icon}</div>
-                        <div class="fw-bold">${day.day}</div>
-                        <div class="fs-4">${day.temp}°C</div>
-                        <div class="small">${day.condition}</div>
+        // Create a card for each location
+        weatherData.forEach(data => {
+            const locationCard = document.createElement('div');
+            locationCard.className = 'col-md-6 col-lg-4';
+            
+            // Build forecast HTML
+            let forecastHTML = '';
+            data.forecast.forEach(day => {
+                forecastHTML += `
+                    <div class="col">
+                        <div class="forecast-card" style="padding: 10px; font-size: 0.85rem;">
+                            <div class="forecast-icon" style="font-size: 1.5rem;">${day.icon}</div>
+                            <div class="fw-bold small">${day.day}</div>
+                            <div class="fs-6">${day.temp}°C</div>
+                            <div class="small" style="font-size: 0.7rem;">${day.condition}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            locationCard.innerHTML = `
+                <div class="location-weather-card">
+                    <h3 class="location-title">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        ${data.location}
+                    </h3>
+                    
+                    <!-- Current Weather -->
+                    <div class="text-center mb-3">
+                        <div class="weather-icon" style="font-size: 3rem;">${getWeatherEmoji(data.description)}</div>
+                        <div class="temperature" style="font-size: 2.5rem;">${data.temperature}°C</div>
+                        <div class="text-muted">${data.description.charAt(0).toUpperCase() + data.description.slice(1)}</div>
+                    </div>
+                    
+                    <!-- Weather Details -->
+                    <div class="mb-3">
+                        <div class="small mb-1">
+                            <i class="bi bi-droplet-fill text-info"></i>
+                            <strong>Humidity:</strong> ${data.humidity}%
+                        </div>
+                        <div class="small">
+                            <i class="bi bi-wind text-success"></i>
+                            <strong>Wind:</strong> ${data.windSpeed} km/h
+                        </div>
+                    </div>
+                    
+                    <!-- Forecast -->
+                    <h6 class="mb-2">5-Day Forecast</h6>
+                    <div class="row row-cols-5 g-1">
+                        ${forecastHTML}
                     </div>
                 </div>
             `;
-            forecastContainer.innerHTML += forecastCard;
+            
+            weatherCardsContainer.appendChild(locationCard);
         });
         
         // Show mock data warning if applicable
-        if (data.mock) {
+        if (weatherData.length > 0 && weatherData[0].mock) {
             document.getElementById('mockWarning').style.display = 'block';
         }
         

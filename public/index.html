@@ -66,6 +66,19 @@
         .forecast-icon {
             font-size: 2rem;
         }
+        .location-weather-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .location-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
         .loading {
             display: inline-block;
             width: 20px;
@@ -106,7 +119,7 @@
         <div class="weather-card">
             <h2 class="mb-4">
                 <i class="bi bi-cloud-sun-fill text-primary"></i>
-                Weather Forecast - Singapore
+                Weather Forecast - Multiple Locations
             </h2>
             
             <div id="weatherLoading" class="text-center py-5">
@@ -115,34 +128,8 @@
             </div>
 
             <div id="weatherContent" style="display: none;">
-                <!-- Current Weather -->
-                <div class="row align-items-center mb-4">
-                    <div class="col-md-6 text-center">
-                        <div class="weather-icon" id="weatherIcon">⛅</div>
-                        <div class="temperature" id="temperature">--°C</div>
-                        <div class="text-muted" id="description">--</div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-2">
-                            <i class="bi bi-droplet-fill text-info"></i>
-                            <strong>Humidity:</strong> <span id="humidity">--</span>%
-                        </div>
-                        <div class="mb-2">
-                            <i class="bi bi-wind text-success"></i>
-                            <strong>Wind Speed:</strong> <span id="windSpeed">--</span> km/h
-                        </div>
-                        <div>
-                            <i class="bi bi-geo-alt-fill text-danger"></i>
-                            <strong>Location:</strong> <span id="location">Singapore</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 5-Day Forecast -->
-                <h4 class="mt-4 mb-3">5-Day Forecast</h4>
-                <div class="row" id="forecast">
-                    <!-- Forecast cards will be inserted here by JavaScript -->
-                </div>
+                <!-- Weather cards will be inserted here by JavaScript -->
+                <div id="weatherCards" class="row"></div>
 
                 <div id="mockWarning" class="alert alert-info mt-3" style="display: none;">
                     <i class="bi bi-info-circle-fill"></i>
