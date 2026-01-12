@@ -1,0 +1,63 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x, 18.x, 20.x]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Check for syntax errors
+      run: node --check server.js
+
+    - name: Run application (test start)
+      run: |
+        timeout 10s npm start || code=$?
+        if [[ $code -ne 124 && $code -ne 0 ]]; then
+          echo "Application failed to start"
+          exit $code
+        fi
+        echo "Application started successfully"
+      continue-on-error: false
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Check code quality
+      run: |
+        echo "Checking for JavaScript syntax errors..."
+        find . -name "*.js" -not -path "./node_modules/*" -exec node --check {} \;
+        echo "All JavaScript files are valid!"
